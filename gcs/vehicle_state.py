@@ -27,3 +27,22 @@ class VehicleState:
     altitude_rel_m: Optional[float] = None  # meters above home (usually the one to show)
     ground_speed_ms: Optional[float] = None # meters/second over the ground (horizontal)
     heading_deg: Optional[float] = None     # degrees, 0=N clockwise; None if unknown
+
+    # --- from ATTITUDE (radians on the wire -> stored as degrees) ---
+    roll_deg: Optional[float] = None
+    pitch_deg: Optional[float] = None
+    yaw_deg: Optional[float] = None         # body-frame yaw; distinct from heading_deg above
+
+    # --- from HEARTBEAT ---
+    armed: Optional[bool] = None            # True/False once heard; None = no heartbeat yet
+    flight_mode: Optional[str] = None       # decoded name ("AUTO", "LOITER"); decode lives in reducer
+
+    # --- from SYS_STATUS (battery) ---
+    battery_voltage_v: Optional[float] = None    # volts
+    battery_current_a: Optional[float] = None    # amps being drawn
+    battery_remaining_pct: Optional[int] = None  # percent, 0-100
+
+    # --- from GPS_RAW_INT (GPS quality) ---
+    gps_fix_type: Optional[int] = None           # raw enum: 0-1 no fix, 2 = 2D, 3 = 3D, 4+ better; frontend labels it
+    satellites_visible: Optional[int] = None     # how many satellites the GPS sees
+    hdop: Optional[float] = None                 # horizontal accuracy estimate; lower = better
