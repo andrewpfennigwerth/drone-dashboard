@@ -1,0 +1,13 @@
+/* The Cesium globe fills the viewport, so the page itself must be full-height
+   with no default margin. Near-black background shows through before the globe
+   paints and sets the dark-ops tone. */
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #05080b;
+}

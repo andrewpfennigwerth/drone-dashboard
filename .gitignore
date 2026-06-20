@@ -10,5 +10,10 @@ __pycache__/
 node_modules/
 dist/
 
+# Local env files (Cesium ion token, etc.) -- never commit secrets
+.env
+.env.*
+!.env.example
+
 CLAUDE.md
 v1plan.md

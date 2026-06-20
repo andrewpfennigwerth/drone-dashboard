@@ -1,4 +1,5 @@
 import { useTelemetry } from './useTelemetry.js'
+import CesiumMap from './CesiumMap.jsx'
 
 // Raw fix_type is a stable, universal number; labeling it is the display's job
 // (the decision we made for GPS) -- so the map lives here, not in the backend.
@@ -8,10 +9,13 @@ export default function App() {
   const { snapshot, connected } = useTelemetry()
 
   return (
-    <div style={page}>
-      <h1>Drone Dashboard</h1>
-      <ConnectionBanner connected={connected} />
-      <Fleet snapshot={snapshot} />
+    <div style={shell}>
+      <CesiumMap />
+      <div style={hud}>
+        <h1 style={title}>Drone Dashboard</h1>
+        <ConnectionBanner connected={connected} />
+        <Fleet snapshot={snapshot} />
+      </div>
     </div>
   )
 }
@@ -70,7 +74,18 @@ function fmt(value, unit = '', places = 1) {
   return value.toFixed(places) + unit
 }
 
-const page = { fontFamily: 'system-ui, sans-serif', padding: '1.5rem', maxWidth: 480 }
+// The map fills the viewport; the telemetry HUD floats over it (dark-ops shell).
+// This is a restrained first cut -- palette and typography are a theme pass we'll
+// design together, not a locked-in look.
+const shell = { position: 'relative', height: '100vh', width: '100vw', overflow: 'hidden' }
+const hud = {
+  position: 'absolute', top: 0, left: 0, margin: '1rem',
+  padding: '0.75rem 1rem', maxWidth: 360,
+  background: 'rgba(8, 12, 16, 0.72)', color: '#dbe7f0',
+  borderRadius: 8, backdropFilter: 'blur(4px)',
+  fontFamily: 'system-ui, sans-serif',
+}
+const title = { fontSize: '1.1rem', margin: '0 0 0.5rem' }
 const grid = { display: 'grid', gridTemplateColumns: 'max-content 1fr', gap: '0.25rem 1rem' }
 const dt = { fontWeight: 600 }
 const dd = { margin: 0, fontVariantNumeric: 'tabular-nums' }
