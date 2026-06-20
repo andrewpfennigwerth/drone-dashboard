@@ -10,7 +10,7 @@ export default function App() {
 
   return (
     <div style={shell}>
-      <CesiumMap />
+      <CesiumMap snapshot={snapshot} />
       <div style={hud}>
         <h1 style={title}>Drone Dashboard</h1>
         <ConnectionBanner connected={connected} />
