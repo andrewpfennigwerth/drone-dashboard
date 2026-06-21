@@ -1,6 +1,5 @@
-/* The Cesium globe fills the viewport, so the page itself must be full-height
-   with no default margin. Near-black background shows through before the globe
-   paints and sets the dark-ops tone. */
+/* The Cesium globe fills the viewport, so the page must be full-height with no
+   default margin. Near-black shows through before the globe paints. */
 html,
 body,
 #root {
@@ -10,4 +9,153 @@ body,
 body {
   margin: 0;
   background: #05080b;
+}
+
+/* --- Dark-ops / tactical-cyber theme tokens. Tune the whole look from here. --- */
+:root {
+  --neon: #e8ff00;
+  --neon-dim: rgba(232, 255, 0, 0.22);
+  --panel: rgba(6, 9, 12, 0.82);
+  --text: #cdd9e3;
+  --text-dim: #5d7283;
+  --danger: #ff4438;
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+}
+
+/* --- HUD panel --- */
+.hud {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  min-width: 234px;
+  padding: 0.9rem 1rem 1rem;
+  background: var(--panel);
+  border: 1px solid var(--neon-dim);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Neon corner brackets -- an echo of the drone's "][" motif. */
+.hud::before,
+.hud::after {
+  content: "";
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  border: 2px solid var(--neon);
+}
+.hud::before {
+  top: -1px;
+  left: -1px;
+  border-right: 0;
+  border-bottom: 0;
+}
+.hud::after {
+  right: -1px;
+  bottom: -1px;
+  border-left: 0;
+  border-top: 0;
+}
+
+.hud__title {
+  margin-bottom: 0.7rem;
+  color: var(--text-dim);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.hud__note {
+  margin: 0;
+  color: var(--text-dim);
+}
+
+/* --- Link status line --- */
+.link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.link__dot {
+  width: 7px;
+  height: 7px;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+.link--ok {
+  color: var(--neon);
+}
+.link--down {
+  color: var(--danger);
+  animation: blink 1s steps(2, start) infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* --- Vehicle readout --- */
+.vehicle__id {
+  margin-bottom: 0.55rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  color: var(--text);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.readout {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.32rem 1rem;
+  margin: 0;
+}
+.readout dt {
+  color: var(--text-dim);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.readout dd {
+  margin: 0;
+  text-align: right;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.readout dd.is-empty {
+  color: var(--text-dim);
+}
+.readout dd.is-accent {
+  color: var(--neon);
+}
+
+/* --- Follow / free-look toggle (floats over the map) --- */
+.track-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--panel);
+  border: 1px solid var(--neon-dim);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.track-btn:hover {
+  border-color: var(--neon);
+  color: var(--neon);
 }
