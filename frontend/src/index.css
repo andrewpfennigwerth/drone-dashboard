@@ -62,12 +62,33 @@ body {
   border-top: 0;
 }
 
-.hud__title {
+.hud__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 0.7rem;
+}
+.hud__title {
   color: var(--text-dim);
   font-size: 10px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
+}
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  background: transparent;
+  border: 0;
+  color: var(--text-dim);
+  cursor: pointer;
+}
+.icon-btn:hover {
+  color: var(--neon);
+}
+.icon-btn--on {
+  color: var(--neon);
 }
 
 .hud__note {
@@ -304,6 +325,48 @@ body {
   font-size: 11px;
   color: var(--text);
   font-variant-numeric: tabular-nums;
+}
+
+/* --- Buildings checkbox --- */
+.check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+  color: var(--text-dim);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.check input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 13px;
+  height: 13px;
+  margin: 0;
+  display: inline-grid;
+  place-content: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--neon-dim);
+  cursor: pointer;
+}
+.check input::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  background: var(--neon);
+  transform: scale(0);
+  transition: transform 0.1s ease-in-out;
+}
+.check input:checked {
+  border-color: var(--neon);
+}
+.check input:checked::before {
+  transform: scale(1);
+}
+.check input:hover {
+  border-color: var(--neon);
 }
 
 /* --- Follow / free-look toggle (sits at the bottom of the HUD panel) --- */

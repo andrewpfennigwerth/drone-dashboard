@@ -4,6 +4,7 @@ import {
   Viewer,
   Terrain,
   UrlTemplateImageryProvider,
+  IonImageryProvider,
   Cartesian3,
   Cartographic,
   Color,
@@ -14,6 +15,7 @@ import {
   CallbackProperty,
   PolylineGlowMaterialProperty,
   sampleTerrainMostDetailed,
+  createOsmBuildingsAsync,
 } from 'cesium'
 import 'cesium/Build/Cesium/Widgets/widgets.css'
 
@@ -49,7 +51,7 @@ const SPAN = 8 // rotor offset from center along both axes
 const ROTOR_RADIUS = 3.5
 const ROTOR_THICKNESS = 0.8
 
-export default function CesiumMap({ snapshot, track }) {
+export default function CesiumMap({ snapshot, track, basemap, buildings }) {
   const containerRef = useRef(null)
 
   // Cesium is imperative and lives outside React's render cycle, so we keep its
@@ -63,6 +65,8 @@ export default function CesiumMap({ snapshot, track }) {
   const samplingRef = useRef(false) // guard so the home-ground sample fires only once
   const trailRef = useRef([]) // Cartesian3[] breadcrumb, capped at TRAIL_MAX_POINTS
   const trackRef = useRef(true) // mirror of `track` so the snapshot effect can read it
+  const osmRef = useRef(null) // the OSM Buildings tileset, once it loads
+  const buildingsRef = useRef(true) // mirror of `buildings` for the async load
 
   // --- Build the globe, the trail, and the drone ONCE (empty deps = mount only). ---
   useEffect(() => {
@@ -84,15 +88,18 @@ export default function CesiumMap({ snapshot, track }) {
       selectionIndicator: false,
     })
 
-    // Drop Cesium's default (bright) imagery and drape the dark basemap instead.
-    viewer.imageryLayers.removeAll()
-    viewer.imageryLayers.addImageryProvider(
-      new UrlTemplateImageryProvider(DARK_IMAGERY),
-    )
-
     viewer.camera.setView({
       destination: Cartesian3.fromDegrees(HOME.lon, HOME.lat, HOME.height),
       orientation: { heading: 0, pitch: CesiumMath.toRadians(-35), roll: 0 },
+    })
+
+    // Global 3D buildings (Cesium OSM Buildings, via ion) -- gives NYC a skyline.
+    // It streams by view, so it's free elsewhere. Loads async; skip if the viewer
+    // was torn down (e.g. HMR) before it resolves.
+    createOsmBuildingsAsync().then((tileset) => {
+      if (viewer.isDestroyed()) return
+      tileset.show = buildingsRef.current // honor the toggle even if it changed while loading
+      osmRef.current = viewer.scene.primitives.add(tileset)
     })
 
     rotationRef.current = new Matrix3() // filled in per snapshot
@@ -166,6 +173,37 @@ export default function CesiumMap({ snapshot, track }) {
       viewerRef.current = null
     }
   }, [])
+
+  // --- Swap the base imagery when the basemap mode changes (and on mount). ---
+  useEffect(() => {
+    const viewer = viewerRef.current
+    if (!viewer) return
+    let cancelled = false
+
+    async function applyBasemap() {
+      // Satellite is ion asset 2 (Bing aerial), which loads async; dark is the
+      // synchronous CARTO raster. The cancelled flag drops a late async result if
+      // the mode changed again before it resolved.
+      const provider =
+        basemap === 'satellite'
+          ? await IonImageryProvider.fromAssetId(2)
+          : new UrlTemplateImageryProvider(DARK_IMAGERY)
+      if (cancelled || viewer.isDestroyed()) return
+      viewer.imageryLayers.removeAll()
+      viewer.imageryLayers.addImageryProvider(provider)
+    }
+    applyBasemap()
+
+    return () => {
+      cancelled = true
+    }
+  }, [basemap])
+
+  // --- Toggle the 3D buildings layer. ---
+  useEffect(() => {
+    buildingsRef.current = buildings
+    if (osmRef.current) osmRef.current.show = buildings
+  }, [buildings])
 
   // --- Push each new snapshot into Cesium. Runs ~5 Hz, whenever data arrives. ---
   useEffect(() => {

@@ -15,18 +15,48 @@ export default function App() {
   // Camera-follow state lives here so the toggle can sit in the HUD panel while
   // CesiumMap consumes it as a prop.
   const [track, setTrack] = useState(true)
+  // Map base layer: dark CARTO (default) or ion satellite, toggled by the layers
+  // icon in the panel and consumed by CesiumMap.
+  const [basemap, setBasemap] = useState('dark')
+  const [buildings, setBuildings] = useState(true)
   // The edge instruments track the primary vehicle. v1 is single-vehicle; the
   // text panel still lists whatever the fleet holds (door open for multi-vehicle).
   const primary = snapshot ? Object.values(snapshot)[0] : null
 
   return (
     <div style={shell}>
-      <CesiumMap snapshot={snapshot} track={track} />
+      <CesiumMap snapshot={snapshot} track={track} basemap={basemap} buildings={buildings} />
 
       <div className="hud">
-        <div className="hud__title">GCS // Telemetry</div>
+        <div className="hud__header">
+          <div className="hud__title">GCS // Telemetry</div>
+          <button
+            className={`icon-btn${basemap === 'satellite' ? ' icon-btn--on' : ''}`}
+            title={
+              basemap === 'dark'
+                ? 'Basemap: dark — switch to satellite'
+                : 'Basemap: satellite — switch to dark'
+            }
+            aria-label="Toggle basemap"
+            onClick={() => setBasemap((b) => (b === 'dark' ? 'satellite' : 'dark'))}
+          >
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round">
+              <polygon points="12 2 2 7 12 12 22 7 12 2" />
+              <polyline points="2 17 12 22 22 17" />
+              <polyline points="2 12 12 17 22 12" />
+            </svg>
+          </button>
+        </div>
         <LinkStatus connected={connected} />
         <Fleet snapshot={snapshot} />
+        <label className="check">
+          <input
+            type="checkbox"
+            checked={buildings}
+            onChange={(e) => setBuildings(e.target.checked)}
+          />
+          3D buildings
+        </label>
         <button
           className={`track-btn${track ? ' track-btn--on' : ''}`}
           onClick={() => setTrack((t) => !t)}
