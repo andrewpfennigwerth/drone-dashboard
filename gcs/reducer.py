@@ -32,6 +32,8 @@ def apply(message, state: VehicleState) -> VehicleState:
             altitude_msl_m=message.alt / 1000,           # mm -> m, above mean sea level
             altitude_rel_m=message.relative_alt / 1000,  # mm -> m, above home
             ground_speed_ms=_ground_speed_ms(message.vx, message.vy),
+            velocity_north_ms=message.vx / 100,  # cm/s -> m/s (+north)
+            velocity_east_ms=message.vy / 100,   # cm/s -> m/s (+east)
             heading_deg=_heading_deg(message.hdg),
         )
 

@@ -18,11 +18,12 @@ body {
   --panel: rgba(6, 9, 12, 0.82);
   --text: #cdd9e3;
   --text-dim: #5d7283;
+  --amber: #ffb000;
   --danger: #ff4438;
   --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
 }
 
-/* --- HUD panel --- */
+/* --- HUD text panel (top-left, the data backbone) --- */
 .hud {
   position: absolute;
   top: 1rem;
@@ -138,16 +139,180 @@ body {
   color: var(--neon);
 }
 
-/* --- Follow / free-look toggle (floats over the map) --- */
-.track-btn {
+/* --- Instruments: small glass panels positioned around the screen edge --- */
+.inst {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  padding: 0.5rem 0.75rem;
+  padding: 0.6rem 0.7rem;
   background: var(--panel);
   border: 1px solid var(--neon-dim);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
+  font-family: var(--mono);
+  color: var(--text);
+}
+.inst__label {
+  margin-bottom: 0.35rem;
+  color: var(--text-dim);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.inst--heading {
+  top: 1rem;
+  right: 1rem;
+}
+.inst--attitude {
+  bottom: 1rem;
+  left: 1rem;
+}
+.inst--battery {
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.inst--motion {
+  bottom: 1rem;
+  right: 1rem;
+}
+
+/* --- Motion (translational-velocity) indicator --- */
+.motion__svg {
+  display: block;
+  width: 92px;
+  height: 92px;
+}
+.motion__box {
+  fill: none;
+  stroke: var(--neon-dim);
+  stroke-width: 1.5;
+}
+.motion__box--inner {
+  stroke: rgba(255, 255, 255, 0.1);
+}
+.motion__cross {
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 1;
+}
+.motion__tick {
+  fill: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 7px;
+  letter-spacing: 0.12em;
+  text-anchor: middle;
+}
+.motion__dot {
+  fill: var(--neon);
+  filter: drop-shadow(0 0 4px var(--neon));
+  transition: cx 0.12s linear, cy 0.12s linear;
+}
+.motion__dot--idle {
+  fill: var(--text-dim);
+  filter: none;
+}
+
+/* --- Heading rose --- */
+.rose__svg {
+  display: block;
+  width: 86px;
+  height: 86px;
+}
+.rose__ring {
+  fill: none;
+  stroke: var(--neon-dim);
+  stroke-width: 1.5;
+}
+.rose__tick {
+  stroke: rgba(255, 255, 255, 0.18);
+  stroke-width: 1;
+}
+.rose__card {
+  fill: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 9px;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+.rose__card--n {
+  fill: var(--neon);
+}
+.rose__needle {
+  fill: var(--neon);
+  filter: drop-shadow(0 0 3px var(--neon));
+}
+.rose__readout {
+  margin-top: 0.3rem;
+  text-align: center;
+  font-size: 11px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Attitude indicator (artificial horizon) --- */
+.adi__svg {
+  display: block;
+  width: 86px;
+  height: 86px;
+}
+.adi__sky {
+  fill: #13384d;
+}
+.adi__ground {
+  fill: #241a0f;
+}
+.adi__horizon {
+  stroke: var(--neon);
+  stroke-width: 1.5;
+}
+.adi__rim {
+  fill: none;
+  stroke: var(--neon-dim);
+  stroke-width: 1.5;
+}
+.adi__ref {
+  stroke: var(--neon);
+  stroke-width: 2;
+}
+.adi__dot {
+  fill: var(--neon);
+}
+
+/* --- Battery bar --- */
+.batt {
+  width: 150px;
+}
+.batt__track {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--neon-dim);
+  overflow: hidden;
+}
+.batt__fill {
+  height: 100%;
+  transition: width 0.3s linear;
+}
+.batt__fill--ok {
+  background: var(--neon);
+}
+.batt__fill--warn {
+  background: var(--amber);
+}
+.batt__fill--crit {
+  background: var(--danger);
+}
+.batt__readout {
+  margin-top: 0.3rem;
+  font-size: 11px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Follow / free-look toggle (sits at the bottom of the HUD panel) --- */
+.track-btn {
+  margin-top: 0.85rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--neon-dim);
   color: var(--text);
   font-family: var(--mono);
   font-size: 10.5px;
@@ -156,6 +321,11 @@ body {
   cursor: pointer;
 }
 .track-btn:hover {
+  border-color: var(--neon);
+  color: var(--neon);
+}
+/* Lit neon while following; plain in free-look. */
+.track-btn--on {
   border-color: var(--neon);
   color: var(--neon);
 }

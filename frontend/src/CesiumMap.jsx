@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import {
   Ion,
   Viewer,
@@ -49,7 +49,7 @@ const SPAN = 8 // rotor offset from center along both axes
 const ROTOR_RADIUS = 3.5
 const ROTOR_THICKNESS = 0.8
 
-export default function CesiumMap({ snapshot }) {
+export default function CesiumMap({ snapshot, track }) {
   const containerRef = useRef(null)
 
   // Cesium is imperative and lives outside React's render cycle, so we keep its
@@ -63,8 +63,6 @@ export default function CesiumMap({ snapshot }) {
   const samplingRef = useRef(false) // guard so the home-ground sample fires only once
   const trailRef = useRef([]) // Cartesian3[] breadcrumb, capped at TRAIL_MAX_POINTS
   const trackRef = useRef(true) // mirror of `track` so the snapshot effect can read it
-
-  const [track, setTrack] = useState(true)
 
   // --- Build the globe, the trail, and the drone ONCE (empty deps = mount only). ---
   useEffect(() => {
@@ -188,9 +186,10 @@ export default function CesiumMap({ snapshot }) {
     // same spot returned different heights at different moments. One fixed
     // reference fixes that and keeps the drone (and the camera following it) smooth.
     if (homeGroundRef.current === null) {
-      // Wait for real world terrain (availability is undefined on the placeholder
-      // ellipsoid provider), then sample the takeoff ground height exactly once.
-      if (!samplingRef.current && viewer.terrainProvider.availability) {
+      // Wait for real world terrain. terrainProvider is briefly undefined while it
+      // loads, and the placeholder ellipsoid provider has no `availability` -- the
+      // optional chain skips both cases, so we just retry on the next snapshot.
+      if (!samplingRef.current && viewer.terrainProvider?.availability) {
         samplingRef.current = true
         sampleTerrainMostDetailed(viewer.terrainProvider, [
           Cartographic.fromDegrees(v.longitude, v.latitude),
@@ -262,14 +261,7 @@ export default function CesiumMap({ snapshot }) {
     )
   }
 
-  return (
-    <>
-      <div ref={containerRef} style={fill} />
-      <button className="track-btn" onClick={() => setTrack((t) => !t)}>
-        {track ? '◎ Follow' : '○ Free look'}
-      </button>
-    </>
-  )
+  return <div ref={containerRef} style={fill} />
 }
 
 const fill = { position: 'absolute', inset: 0 }

@@ -26,6 +26,8 @@ class VehicleState:
     altitude_msl_m: Optional[float] = None  # meters above mean sea level
     altitude_rel_m: Optional[float] = None  # meters above home (usually the one to show)
     ground_speed_ms: Optional[float] = None # meters/second over the ground (horizontal)
+    velocity_north_ms: Optional[float] = None  # m/s, +north (horizontal velocity component)
+    velocity_east_ms: Optional[float] = None   # m/s, +east  (pairs with north for a vector)
     heading_deg: Optional[float] = None     # degrees, 0=N clockwise; None if unknown
 
     # --- from ATTITUDE (radians on the wire -> stored as degrees) ---

@@ -50,6 +50,8 @@ def test_global_position_int_converts_every_field():
     assert math.isclose(new.altitude_msl_m, 584.09)
     assert math.isclose(new.altitude_rel_m, 10.0)
     assert math.isclose(new.ground_speed_ms, 5.0)
+    assert math.isclose(new.velocity_north_ms, 3.0)   # vx 300 cm/s -> 3 m/s north
+    assert math.isclose(new.velocity_east_ms, 4.0)    # vy 400 cm/s -> 4 m/s east
     assert math.isclose(new.heading_deg, 90.0)
 
 
