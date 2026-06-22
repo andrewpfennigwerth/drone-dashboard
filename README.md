@@ -18,7 +18,7 @@ state on a 3D globe.
   with **every unit conversion centralized in one tested reducer**.
 - Broadcasts state snapshots to the browser over a WebSocket at a fixed ~5 Hz tick
   (decoupled from how fast MAVLink arrives).
-- Renders it on a **3D CesiumJS globe** in a dark-ops tactical style:
+- Renders it on a **3D CesiumJS globe**:
   - the drone as a minimal neon quad that **banks with its real roll/pitch/yaw**,
   - a glowing breadcrumb **trail** and a **follow camera**,
   - **glass-cockpit instruments** around the edge — heading rose, artificial
