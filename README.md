@@ -2,8 +2,7 @@
 
 A read-only ground control station (GCS): it ingests live MAVLink telemetry from a
 simulated drone and shows an operator a real-time, map-based picture of vehicle
-state on a 3D globe. It observes; it never commands the vehicle — read-only is a
-deliberate scope decision.
+state on a 3D globe. 
 
 > One-liner: a lightweight ground control station that ingests live MAVLink
 > telemetry and gives an operator a real-time, map-based picture of vehicle state
